@@ -1,95 +1,142 @@
-import Image from "next/image";
+'use client'
+import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
+import { CButton, CContainer } from "@coreui/react";
+import Form from "./component/Form";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { apiservice } from "@/service/api";
+import Swal from 'sweetalert2';
+
+function htmlDecode(input) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(input, "text/html");
+  return doc.documentElement.textContent;
+}
 
 export default function Home() {
+  const [movies, setMovies] = useState([]);
+  const [moviesDes, setMoviesDes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    date: "",
+    movieList: "",
+  });
+
+  const handleInputChange = (e) => {
+    setMoviesDes(movies[e.target.id]?.extdata.movieinfo.synopsis)
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      setLoading(true);
+      const data = await apiservice();
+      setMovies(data.movies);
+      setLoading(false);
+    };
+
+    fetchMovies();
+  }, []);
+
+ 
+
+   
+  const handleSubmit = () => {
+ 
+
+    return Swal.fire({
+      title: `Hi ${formData.name || "Guess" }!`,
+      text: 'Your Event has been booked',
+      html:`<table>
+      <tr>${formData.name}<br/>
+        ${formData.phone}<br/>
+        ${formData.email}<br/>
+        ${formData.date}<br/>
+        ${formData.movieList}<br/>
+      </tr></table>`,
+      icon: 'success',  
+      confirmButtonText: 'OK',
+    });    
+  };
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.js</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
+        <CContainer className="d-flex flex-column justify-content-center align-items-center ">
+          <div className="border-1 shadow p-5 rounded vw-70">
+            <h2 className="text-center fw-bold">Birthday Event</h2>
+            {movies.length > 0 && (
+              <>
+              <Form
+                required
+                label="Name"
+                name="name"
+                type="text"
+                placeholder="Enter your name"
+                onChange={(e) => handleInputChange(e)}
+                classname='mb-2 form-control'
+              />
+              <Form
+                required
+                label="Phone Number"
+                name="phone"
+                type="tel"
+                placeholder="Enter your phone number"
+                onChange={(e) => handleInputChange(e)}
+                classname='mb-2 form-control'
+              />
+              <Form
+                required
+                label="Email"
+                name="email"
+                type="email"
+                placeholder="Enter your email"
+                onChange={(e) => handleInputChange(e)}
+                classname='mb-2 form-control'
+              />
+            <hr/>
+              <Form
+                required
+                label="Date Event"
+                name="date"
+                type="date"
+                placeholder="Enter your email"
+                onChange={(e) => handleInputChange(e)}
+                classname='mb-2 form-control'
+              />
+              <Form
+                required
+                label="Movie List"
+                name="movieList"
+                type="select"
+                placeholder="Select an option"
+                options={movies.map((movie,i) => ({
+                  value: movie.name,
+                  label: movie.name,
+                  id: i,
+                  image: movie.assets[4].extdata.fileinfo
+                }))}
+                onChange={(e) => handleInputChange(e)}
+              />
+              <p className="des">{ htmlDecode(moviesDes) || "divription not available."}</p>
+              <div className="text-center mt-3">
+                <CButton color="primary" onClick={handleSubmit}>
+                  Submit
+                </CButton>
+              </div>
+              </>
+            )}
+          </div>
+        </CContainer>
       </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      <footer className={styles.footer}></footer>
     </div>
   );
 }

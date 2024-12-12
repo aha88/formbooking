@@ -35,6 +35,17 @@ a {
   text-decoration: none;
 }
 
+.des {
+  text-align: justify;
+}
+
+.css-hlgwow{
+  display: flex !important
+}
+
+.vw-70 {
+  width: 70vw;
+}
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
