@@ -1,13 +1,18 @@
 import React from "react";
 import Select from "react-select";
+import Image from 'next/image'
 
 const customSingleValue = ({ data }) => (
     <div style={{ display: "flex", alignItems: "center"}}>
-      <img
+      <Image
+        style={{marginRight: 10}}
         src={data.image.fileurl}
         alt={data.label}
+        width={80}
+        height={100}
+        unoptimized 
       />
-      {data.label}
+       <span> {data.label}</span>
     </div>
   );
   

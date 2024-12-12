@@ -26,8 +26,12 @@ export default function Home() {
   });
 
   const handleInputChange = (e) => {
-    setMoviesDes(movies[e.target.id]?.extdata.movieinfo.synopsis)
     const { name, value } = e.target;
+    console.log(name);
+    if(name=="movieList"){
+      setMoviesDes(movies[e.target.id]?.extdata.movieinfo.synopsis)
+    }
+
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
@@ -125,7 +129,7 @@ export default function Home() {
                 }))}
                 onChange={(e) => handleInputChange(e)}
               />
-              <p className="des">{ htmlDecode(moviesDes) || "divription not available."}</p>
+              <p className="des"><strong>Description:</strong><br/>{ htmlDecode(moviesDes) || "description not available."}</p>
               <div className="text-center mt-3">
                 <CButton color="primary" onClick={handleSubmit}>
                   Submit
